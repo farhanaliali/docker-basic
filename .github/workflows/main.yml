@@ -20,3 +20,17 @@ jobs:
       run: docker build . --file Dockerfile --tag $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
     - name: Docker Push
       run: docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
+    - uses: azure/k8s-set-context@v1
+      with:
+          kubeconfig: ${{ secrets.kubeconfig }}
+      id: login
+      
+    - uses: azure/k8s-deploy@v1
+      with:
+          namespace: default
+          manifests: |
+               deployment.yml 
+               service.yml
+          images: |
+              $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
+         
