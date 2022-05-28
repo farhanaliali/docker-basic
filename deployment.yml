@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - image: farhanluckali/node-helloworld:2022-05-28--29-56
-        name: 
+        name: node
