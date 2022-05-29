@@ -20,17 +20,23 @@ jobs:
       run: docker build . --file Dockerfile --tag $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
     - name: Docker Push
       run: docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
-    - uses: azure/k8s-set-context@v1
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v1
       with:
-          kubeconfig: ${{ secrets.kubeconfig }}
-      id: login
-      
-    - uses: azure/k8s-deploy@v1
+        version: 'latest'
+      id: install
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-          namespace: default
-          manifests: |
-               deployment.yml 
-               service.yml
-          images: |
-              $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+    - name: Update kube config
+      run: aws eks update-kubeconfig --name my-cluster --region ca-central-1
+
+    - name: Deploy image to Amazon EKS
+      run: |
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yml
          
