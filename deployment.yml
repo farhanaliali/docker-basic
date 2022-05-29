@@ -18,3 +18,4 @@ spec:
       containers:
       - image: farhanluckali/node-helloworld:latest
         name: node
+        imagePullPolicy: always
