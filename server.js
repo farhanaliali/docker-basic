@@ -4,7 +4,7 @@ var port = 4001
 
 var server = http.createServer(function (request, response) {
   response.writeHead(200, {'Content-Type': 'text/plain'})
-  response.end('Image test \n')
+  response.end('Hello World \n')
 })
 
 server.listen(port)
