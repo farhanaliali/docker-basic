@@ -33,7 +33,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ca-central-1
     - name: Update kube config
-      run: aws eks update-kubeconfig --name my-cluster --region ca-central-1
+      run: aws eks update-kubeconfig --region ca-central-1 --name helloworld
 
     - name: Deploy image to Amazon EKS
       run: |
