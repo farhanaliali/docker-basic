@@ -17,9 +17,11 @@ jobs:
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M-%S')"
     - name: Build the Docker image # push The image to the docker hub
-      run: docker build . --file Dockerfile --tag $DOCKER_USER/$REPO_NAME:latest
+      run: docker build . --file Dockerfile --tag $DOCKER_USER/$REPO_NAME:latest --tag $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
     - name: Docker Push
       run: docker push $DOCKER_USER/$REPO_NAME:latest
+    - name: DOckerPush with data
+      run: docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
     - name: Install kubectl
       uses: azure/setup-kubectl@v1
       with:
