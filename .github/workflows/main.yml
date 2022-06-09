@@ -36,4 +36,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: sh /home/farhanali/docker-basic/deploy.sh
+          script: cd docker-basic; sh deploy.sh
