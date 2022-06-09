@@ -22,24 +22,3 @@ jobs:
       run: docker push $DOCKER_USER/$REPO_NAME:latest
     - name: DOckerPush with data
       run: docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v1
-      with:
-        version: 'latest'
-      id: install
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ca-central-1
-    - name: Update kube config
-      run: aws eks update-kubeconfig --region ca-central-1 --name helloworld
-
-    - name: Deploy image to Amazon EKS
-      run: |
-        kubectl apply -f deployment.yml 
-        kubectl apply -f service.yml
-        kubectl rollout restart deploy node-app
-         
