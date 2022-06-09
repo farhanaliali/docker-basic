@@ -3,7 +3,7 @@ echo "Deploying changes..."
 git pull
 
 # Build the image with the new changes
-docker build . -t nodeapp
+docker build -t nodeapp -f /home/farhanali/docker-basic/Dockerfile .
 
 # Shut down the existing containers
 docker-compose down
