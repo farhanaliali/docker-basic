@@ -1,39 +1,39 @@
 name: This a workflow title 
 on: [push] # When pushing to any branch then run this action
 # Env variable
-#env:
-#  DOCKER_USER: ${{secrets.DOCKER_USER}}
-#  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-#  REPO_NAME: ${{secrets.REPO_NAME}}
-#jobs:
- # push-image-to-docker-hub:  # job name
- #   runs-on: ubuntu-latest  # runner name : (ubuntu latest version) 
- #   steps:
- #   - uses: actions/checkout@v2 # first action : checkout source code
- #   - name: docker login
- #     run: | # log into docker hub account
- #       docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  
- #   - name: Get current date # get the date of the build
- #     id: date
- #     run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M-%S')"
- #   - name: Build the Docker image # push The image to the docker hub
- #     run: docker build . --file Dockerfile --tag $DOCKER_USER/$REPO_NAME:latest --tag $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
- #   - name: Docker Push
- #     run: docker push $DOCKER_USER/$REPO_NAME:latest
- #   - name: DOckerPush with data
-#      run: docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
+env:
+  DOCKER_USER: ${{secrets.DOCKER_USER}}
+  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  REPO_NAME: ${{secrets.REPO_NAME}}
 jobs:
-  deploy:
+  push-image-to-docker-hub:  # job name
+    runs-on: ubuntu-latest  # runner name : (ubuntu latest version) 
+    steps:
+    - uses: actions/checkout@v2 # first action : checkout source code
+    - name: docker login
+      run: | # log into docker hub account
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  
+    - name: Get current date # get the date of the build
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M-%S')"
+    - name: Build the Docker image # push The image to the docker hub
+      run: docker build . --file Dockerfile --tag $DOCKER_USER/$REPO_NAME:latest --tag $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
+    - name: Docker Push
+      run: docker push $DOCKER_USER/$REPO_NAME:latest
+    - name: DOckerPush with data
+      run: docker push $DOCKER_USER/$REPO_NAME:${{ steps.date.outputs.date }}
+#jobs:
+ # deploy:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+  #  runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - name: log into VPS and trigger deploy script
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }} # uses secrets stored in the Secrets tab
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: cd docker-basic; sh deploy.sh
+   # steps:
+   #   - name: log into VPS and trigger deploy script
+    #    uses: appleboy/ssh-action@master
+     #   with:
+      #    host: ${{ secrets.HOST }} # uses secrets stored in the Secrets tab
+       #   username: ${{ secrets.USERNAME }}
+        #  password: ${{ secrets.PASSWORD }}
+         # port: ${{ secrets.PORT }}
+        #  script: cd docker-basic; sh deploy.sh
