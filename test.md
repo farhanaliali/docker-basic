@@ -1,4 +1,6 @@
 ############ Cloud init 
+ 
+    sudo apt update -y && sudo apt install libguestfs-tools -y
 
 Download Ubuntu (replace with the url of the one you chose from above)
 
