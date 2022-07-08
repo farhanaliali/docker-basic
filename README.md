@@ -1,2 +1,2 @@
 # docker-basic
-docker-node
+This is test node app which run on port 4001
