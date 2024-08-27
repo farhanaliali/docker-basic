@@ -27,6 +27,4 @@ jobs:
         with:
           push: true
           tags: farhanluckali/node-helloworld:latest
-      - name: Trigger GitHub pages rebuild
-        run: |
-          curl -X get http://72.21.29.57:8080/generic-webhook-trigger/invoke\?token\=api-docker
+
