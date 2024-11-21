@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: node-deployment
 spec:
   selector:
     matchLabels:
-      app: nginx
-  replicas: 2 # specifies the number of instances
+      app: node
+  replicas: 1 # specifies the number of instances
   template:
     metadata:
       labels:
-        app: nginx
+        app: node
     spec:
       containers:
-      - name: nginx
-        image: nginx:alpine
+      - name: node
+        image: farhanluckali/node-helloworld:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8080
