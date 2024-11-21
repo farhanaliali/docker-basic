@@ -6,6 +6,6 @@ spec:
   ingressClassName: nginx
   defaultBackend:
     service:
-      name: nginx-service
+      name: node-service
       port:
         number: 80
