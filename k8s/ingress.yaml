@@ -8,4 +8,4 @@ spec:
     service:
       name: node-service
       port:
-        number: 80
+        number: 8080
