@@ -49,7 +49,7 @@ jobs:
         path: helm-repo  # Clone into a separate folder
     - name: Update values.yaml File
       run: |
-        sed -i "s/tag: .*/tag: ${{ needs.get-commit-id.outputs.commit_id }}/" helm-repo/helm-example/values.yaml
+        sed -i "s/tag: .*/tag: ${needs.get-commit-id.outputs.commit_id}/" helm-repo/helm-example/values.yaml
 
     - name: Commit and Push Updated Helm Values
       working-directory: helm-repo
