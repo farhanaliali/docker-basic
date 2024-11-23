@@ -6,60 +6,24 @@ on:
       - 'main'
 
 jobs:
-  get-commit-id:
-    runs-on: ubuntu-latest
-    outputs:
-      commit_id: ${{ steps.get_commit_id.outputs.commit_id }}
-    steps:
-      - name: Get Short Commit ID
-        id: get_commit_id
-        run: echo "::set-output name=commit_id::$(echo ${GITHUB_SHA} | cut -c1-7)"
-  docker-build-and-push:
-    needs: get-commit-id
+  docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up QEMU
+      -
+        name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
+      -
+        name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Login to DockerHub
+      -
+        name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Build and push
+      -
+        name: Build and push
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: |
-            farhanluckali/node-helloworld:latest
-            farhanluckali/node-helloworld:${{ needs.get-commit-id.outputs.commit_id }}
-
-  image-tag-update:
-    needs: 
-    - get-commit-id
-    - docker-build-and-push
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Helm Values Repository
-      uses: actions/checkout@v3
-      with:
-        repository: farhanaliali/argocd-demo  # Replace with the Helm values repository
-        token: ${{ secrets.PAT }}
-        path: helm-repo  # Clone into a separate folder
-    - name: Update values.yaml File
-      run: |
-        sed -i "s/tag: .*/tag: $COMMIT_ID/" helm-repo/helm-example/values.yaml
-      env:
-        COMMIT_ID: ${{ needs.get-commit-id.outputs.commit_id }}
-
-    - name: Commit and Push Updated Helm Values
-      working-directory: helm-repo
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        git add helm-example/values.yaml
-        git commit -m "Update Helm values.yaml with tag $COMMIT_ID "
-        git push origin master
-      env:
-        COMMIT_ID: ${{ needs.get-commit-id.outputs.commit_id }}
+          tags: farhanluckali/node-helloworld:latest
