@@ -14,7 +14,7 @@ jobs:
       - name: Get Short Commit ID
         id: get_commit_id
         run: echo "::set-output name=commit_id::$(echo ${GITHUB_SHA} | cut -c1-7)"
-  docker-build:
+  docker-build-and-push:
     needs: get-commit-id
     runs-on: ubuntu-latest
     steps:
@@ -36,9 +36,9 @@ jobs:
             farhanluckali/node-helloworld:${{ needs.get-commit-id.outputs.commit_id }}
 
   image-tag-update:
-    needs: |
-      get-commit-id
-      docker-build 
+    needs: 
+    - get-commit-id
+    - docker-build-and-push
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Helm Values Repository
