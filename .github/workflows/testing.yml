@@ -36,7 +36,9 @@ jobs:
             farhanluckali/node-helloworld:${{ needs.get-commit-id.outputs.commit_id }}
 
   image-tag-update:
-    needs: get-commit-id
+    needs: |
+      get-commit-id
+      docker-build 
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Helm Values Repository
