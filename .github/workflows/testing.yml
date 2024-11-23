@@ -3,10 +3,19 @@ name: ci
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
 
 jobs:
+  get-commit-id:
+    runs-on: ubuntu-latest
+    outputs:
+      commit_id: ${{ steps.get_commit_id.outputs.commit_id }}
+    steps:
+      - name: Get Short Commit ID
+        id: get_commit_id
+        run: echo "::set-output name=commit_id::$(echo ${GITHUB_SHA} | cut -c1-7)"
   docker-build:
+    needs: get-commit-id
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -24,9 +33,10 @@ jobs:
           push: true
           tags: |
             farhanluckali/node-helloworld:latest
-            farhanluckali/node-helloworld:${GITHUB_SHA}
+            farhanluckali/node-helloworld:${{ needs.get-commit-id.outputs.commit_id }}
 
   image-tag-update:
+    needs: get-commit-id
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Helm Values Repository
@@ -37,7 +47,7 @@ jobs:
         path: helm-repo  # Clone into a separate folder
     - name: Update values.yaml File
       run: |
-        sed -i "s/tag: .*/tag: ${GITHUB_SHA}/" helm-repo/helm-example/values.yaml
+        sed -i "s/tag: .*/tag: ${{ needs.get-commit-id.outputs.commit_id }}/" helm-repo/helm-example/values.yaml
 
     - name: Commit and Push Updated Helm Values
       working-directory: helm-repo
