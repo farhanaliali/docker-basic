@@ -14,11 +14,11 @@ on:
 
 
 env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: demo-autopilot-cluster   # Add your cluster name here.
-  GKE_REGION: us-east1
-  IMAGE: docker-basic
-  GAR_LOCATION: us-east1-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/demo/docker-basic
+#  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+#  GKE_CLUSTER: demo-autopilot-cluster   # Add your cluster name here.
+#  GKE_REGION: us-east1
+#  IMAGE: docker-basic
+#  GAR_LOCATION: us-east1-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/demo/docker-basic
 
 jobs:
   setup-build-publish-deploy:
@@ -41,25 +41,22 @@ jobs:
       run: "gcloud info"
     - name: "Docker auth"
       run: |-
-          gcloud auth configure-docker ${{ env.GKE_REGION }}-docker.pkg.dev --quiet
+          gcloud auth configure-docker ${{ secrets.GKE_REGION }}-docker.pkg.dev --quiet
     - name: Build image
-      run: docker build --tag ${{ env.GAR_LOCATION }}:${{ github.sha }} .
+      run: docker build --tag ${{ secrets.GAR_LOCATION }}:${{ github.sha }} .
 
     - name: Push image
-      run: docker push ${{ env.GAR_LOCATION }}:${{ github.sha }}
+      run: docker push ${{ secrets.GAR_LOCATION }}:${{ github.sha }}
     - name: Set up GKE credentials
       uses: google-github-actions/get-gke-credentials@v2
       with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_REGION }}
+        cluster_name: ${{ secrets.GKE_CLUSTER }}
+        location: ${{ secrets.GKE_REGION }}
 
   
- #   - name: Get GKE credentials
- #     run: |
- #       gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }}  --region ${{ env.GKE_REGION }} --project ${{ secrets.GKE_PROJECT }}
     - name: Update Deployment Manifest
       run: |
-        sed -i 's|PLACEHOLDER_IMAGE|'"${{ env.GAR_LOCATION }}:${{ github.sha }}"'|g' gcp-k8s/deployment.yaml
+        sed -i 's|PLACEHOLDER_IMAGE|'"${{ secrets.GAR_LOCATION }}:${{ github.sha }}"'|g' gcp-k8s/deployment.yaml
         cat gcp-k8s/deployment.yaml # Debugging: View the updated file
 
     # Step 7: Apply Kubernetes Manifests
