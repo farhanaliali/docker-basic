@@ -18,7 +18,7 @@ env:
   GKE_CLUSTER: cluster-1    # Add your cluster name here.
   GKE_REGION: us-east1
   IMAGE: docker-basic
-  GAR_LOCATION: ${{env.GKE_REGION}}-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/demo/
+  GAR_LOCATION: us-east1-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/demo/
 
 jobs:
   setup-build-publish-deploy:
