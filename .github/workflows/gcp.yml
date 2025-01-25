@@ -15,7 +15,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: cluster-1    # Add your cluster name here.
+  GKE_CLUSTER: demo-autopilot-cluster   # Add your cluster name here.
   GKE_REGION: us-east1
   IMAGE: docker-basic
   GAR_LOCATION: us-east1-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/demo/docker-basic
@@ -43,8 +43,20 @@ jobs:
       run: |-
           gcloud auth configure-docker ${{ env.GKE_REGION }}-docker.pkg.dev --quiet
     - name: Build image
-      run: docker build --tag ${{ env.GAR_LOCATION }} .
+      run: docker build --tag ${{ env.GAR_LOCATION }}:${{ github.sha }} .
 
     - name: Push image
-      run: docker push ${{ env.GAR_LOCATION }}
+      run: docker push ${{ env.GAR_LOCATION }}:${{ github.sha }}
   
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }}  --region ${{ env.GKE_REGION }} --project ${{ secrets.GKE_PROJECT }}
+    - name: Update Deployment Manifest
+      run: |
+        sed -i 's|PLACEHOLDER_IMAGE|'"${{ env.GAR_LOCATION }}:${{ github.sha }}"'|g' gcp-k8s/deployment.yaml
+        cat gcp-k8s/deployment.yaml # Debugging: View the updated file
+
+    # Step 7: Apply Kubernetes Manifests
+    - name: Apply Kubernetes Manifests
+      run: |
+        kubectl apply -f gcp-k8s
