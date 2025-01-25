@@ -55,7 +55,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: us-east1-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/demo/{{env.IMAGE}}:latest
+        tags: us-east1-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/demo/docker-basic:latest
 
     # Set up kustomize
 #    - name: Set up Kustomize
