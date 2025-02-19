@@ -4,7 +4,7 @@ var port = 8080
 
 var server = http.createServer(function (request, response) {
   response.writeHead(200, {'Content-Type': 'text/plain'})
-  response.end('Hello from v4 \n')
+  response.end('Hello from demo-istio-v2 \n')
 })
 
 // Change 'localhost' to '0.0.0.0'
