@@ -1,4 +1,4 @@
-name: ci
+name: build and push dockerhub
 
 on:
   workflow_dispatch: # Allows manual triggering of the workflow
@@ -26,3 +26,4 @@ jobs:
         with:
           push: true
           tags: farhanluckali/node-helloworld:latest
+          platforms: linux/amd64,linux/arm64
