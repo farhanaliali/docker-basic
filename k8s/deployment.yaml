@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: node
-        image: farhanluckali/node-helloworld:latest
+        image: farhanluckali/node-helloworld:l234
         ports:
         - containerPort: 8080
