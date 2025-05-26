@@ -1,0 +1,47 @@
+name: Trigger Jenkins Seed Job
+
+on:
+  workflow_dispatch:
+    inputs:
+      folderName:
+        description: 'Folder Name'
+        required: true
+        type: choice
+        options: [DEV, STAGE, PROD]
+
+      namespace:
+        description: 'Kubernetes Namespace'
+        required: true
+        type: choice
+        options: [tapapps, teamx, devtools]
+
+      gitRepoUrl:
+        description: 'Git Repository URL'
+        required: true
+
+      gitBranch:
+        description: 'Git Branch'
+        required: true
+        default: main
+
+      gitCredsId:
+        description: 'Jenkins Git Credential ID'
+        required: true
+        default: github-token
+
+jobs:
+  trigger-seed-job:
+    name: Trigger Jenkins DSL Seed Job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Jenkins Seed Job via CURL
+        run: |
+          curl -X POST "https://jenkins.demo-k8s.cloudns.ph/job/seed-dsl-job/buildWithParameters" \
+            --user "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
+            --insecure \
+            --data-urlencode "FOLDER_NAME=${{ github.event.inputs.folderName }}" \
+            --data-urlencode "NAMESPACE=${{ github.event.inputs.namespace }}" \
+            --data-urlencode "GIT_REPO_URL=${{ github.event.inputs.gitRepoUrl }}" \
+            --data-urlencode "GIT_BRANCH=${{ github.event.inputs.gitBranch }}" \
+            --data-urlencode "GIT_CREDS_ID=${{ github.event.inputs.gitCredsId }}"
