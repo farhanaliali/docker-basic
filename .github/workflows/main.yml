@@ -1,0 +1,43 @@
+name: Test Secret Vars Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment Name (used in file name)'
+        required: true
+        default: 'sandbox'
+
+      secretsList:
+        description: 'Multiline SSM parameter names (one per line)'
+        required: true
+        type: string
+
+jobs:
+  build-vars:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Generate YAML File from Secrets
+        run: |
+          mkdir -p test/overrides
+
+          secrets_yaml=""
+          while IFS= read -r param; do
+            key=$(echo "$param" | awk -F '_' '{print $(NF)}')
+            val="arn:aws:ssm:us-east-1:980136594430:parameter/${param}"
+            secrets_yaml="$secrets_yaml
+          - key: \"$key\"
+          val: \"$val\""
+          done <<< "${{ github.event.inputs.secretsList }}"
+
+          cat <<EOF > test/overrides/${{ github.event.inputs.env }}-secrets.yml
+vars:${secrets_yaml}
+EOF
+
+          echo "✅ File created at: test/overrides/${{ github.event.inputs.env }}-secrets.yml"
+          echo "----------------------"
+          cat test/overrides/${{ github.event.inputs.env }}-secrets.yml
