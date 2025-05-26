@@ -37,6 +37,15 @@ jobs:
     environment: ${{ github.event.inputs.folderName == 'STAGE' && 'stage' || 'production' }}
 
     steps:
+      - name: Preview Inputs (Before Approval)
+        run: |
+          echo "### 🚀 Jenkins Deployment Preview" >> $GITHUB_STEP_SUMMARY
+          echo "**Folder Name:** ${{ github.event.inputs.folderName }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Namespace:** ${{ github.event.inputs.namespace }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Git Repository URL:** ${{ github.event.inputs.gitRepoUrl }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Git Branch:** ${{ github.event.inputs.gitBranch }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Git Credentials ID:** ${{ github.event.inputs.gitCredsId }}" >> $GITHUB_STEP_SUMMARY
+
       - name: Trigger Jenkins Seed Job
         run: |
           curl -X POST "https://jenkins.demo-k8s.cloudns.ph/job/seed-dsl-job/buildWithParameters" \
